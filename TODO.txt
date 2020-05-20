@@ -1,4 +1,5 @@
 TODO:
-->
-->
-->
+1) Fare un wrapper durante la gestinoe del segnale, in modo che il bit della maschera venga settato a 0 solo alla fine
+2) Fare un timer, che ogni TOT secondi fa sì che un processo invia un segnale
+3) Implementare giusto 2 segnali (magari tipo la kill ed uno che gli notifica tipo "CIAO", non so)
+4) Stack frame per la gestione dei segnali
