@@ -19,8 +19,7 @@ OBJS=pool_allocator.o\
      disastrOS_exit.o\
      disastrOS_shutdown.o\
      disastrOS_schedule.o\
-     disastrOS_preempt.o\
-		 disastrOS_spawn_with_priority.o
+     disastrOS_preempt.o
 
 LIBS=libdisastrOS.a
 

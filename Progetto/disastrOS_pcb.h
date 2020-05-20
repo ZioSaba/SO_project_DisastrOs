@@ -1,8 +1,8 @@
 #pragma once
-#include <stdint.h>
 #include <ucontext.h> // this is the cpu status
 #include "disastrOS_constants.h"
 #include "linked_list.h"
+#include "disastrOS_timer.h"
 
 typedef enum ProcessStatus {Invalid=-1,
 			    Created=0x0,
@@ -41,11 +41,6 @@ typedef struct PCB{
   int syscall_num;
   long int syscall_args[DSOS_MAX_SYSCALLS_ARGS]; 
   int syscall_retvalue;
-
-  //ia priority schedule
-  int quantum_total;    //ia the higher this number, the higher the priority
-  int quantum_elapsed;  //ia elapsed quantum
-  int quantum_to_go;    //ia the remaining quantums (elapsed - quantum_total) -- JIC
 } PCB;
 
 // initializes the memory allocation

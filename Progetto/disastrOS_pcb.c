@@ -5,6 +5,7 @@
 #include "disastrOS_pcb.h"
 #include "disastrOS.h"
 #include "disastrOS_globals.h"
+#include "disastrOS_timer.h"
 
 #define PCB_SIZE sizeof(PCB)
 #define PCB_MEMSIZE (sizeof(PCB)+sizeof(int))
@@ -55,12 +56,7 @@ PCB* PCB_alloc() {
   //MemoryInfo_init(&pcb->memory);
   //CPUState_init(&pcb->cpu);
 
-  //ia priority scheduler -- always remember to initialize stuff :D
-  pcb->quantum_total = 1;
-  pcb->quantum_elapsed = 0;
-  pcb->quantum_to_go = 1;
-
-  return pcb;
+   return pcb;
 }
 
 int PCB_free(PCB* pcb){
@@ -119,11 +115,7 @@ void PCBPtrList_print(ListHead* head) {
 }
 
 void PCB_print(PCB* pcb){
-  //ia lets update also the print function to debug our priority scheduler :)
-  printf("[pid: %d, priority: %d, q_elapsed: %d, child: ",
-         pcb->pid,
-         pcb->quantum_total,
-         pcb->quantum_elapsed);
+  printf("[pid: %d, child: ", pcb->pid);
   
   PCBPtrList_print(&pcb->children);
   printf("]");

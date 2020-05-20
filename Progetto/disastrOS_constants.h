@@ -28,11 +28,6 @@
 #define DSOS_CALL_SLEEP     6
 #define DSOS_CALL_SHUTDOWN  7
 
-//ia defining a syscall number and error numebr for our new syscall
-#define DSOS_ESPAWN_W_PRIORITY -8
-#define DSOS_CALL_SPAWN_W_PRIORITY 8
-#define DSOS_MAX_PRIORITY 255
-
 // scheduling
 #define ALPHA 0.5f
 #define INTERVAL 100 // milliseconds for timer tick

@@ -17,5 +17,4 @@ void internal_shutdown();
 
 void internal_schedule();
 
-//ia novel spawn with CPU quantum information
-void internal_spawnWithPriority();
+void internal_sleep();

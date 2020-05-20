@@ -25,12 +25,9 @@ int disastrOS_fork();
 void disastrOS_exit(int exit_value);
 int disastrOS_wait(int pid, int* retval);
 void disastrOS_preempt();
-void disastrOS_spawn(void (*f)(void*), void* args);
+void disastrOS_spawn(void (*f)(void*), void* args );
 void disastrOS_shutdown();
-
-//ia novel spawn that also gives a sort of "priority" to the process
-//ia EXPOSED (aka used by user processes)
-int disastrOS_spawnWithPriority(int quantums, void (*f)(void*), void* args);
+void disastrOS_sleep(int);
 
 // debug function, prints the state of the internal system
 void disastrOS_printStatus();
