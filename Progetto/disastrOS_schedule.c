@@ -6,9 +6,6 @@
 
 // replaces the running process with the next one in the ready list
 void internal_schedule() {
-  if (running) {
-    disastrOS_debug("PREEMPT - %d ->", running->pid);
-   }
   // at least one process should be in the running queue
   // if not, no preemption occurs
 
@@ -36,8 +33,4 @@ void internal_schedule() {
     running=next_process;
   }
   //disastrOS_printStatus();
- 
-  if (running) {
-    disastrOS_debug(" %d\n", running->pid);
-  }
 }

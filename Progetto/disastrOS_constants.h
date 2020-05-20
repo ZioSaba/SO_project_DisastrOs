@@ -2,7 +2,6 @@
 
 #define MAX_NUM_PROCESSES 1024
 #define STACK_SIZE        16384
-
 // signals
 #define MAX_SIGNALS 32
 #define DSOS_SIGCHLD 0x1
@@ -16,6 +15,7 @@
 #define DSOS_EWAIT  -5
 #define DSOS_ESPAWN  -6
 #define DSOS_ESLEEP  -7
+
 
 // syscall numbers
 #define DSOS_MAX_SYSCALLS 32
