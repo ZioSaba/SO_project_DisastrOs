@@ -43,13 +43,10 @@ void timerHandler(int j, siginfo_t *si, void *old_context) {
 void timerInterrupt(){
   ++disastrOS_time;
   printf("time: %d\n", disastrOS_time);
-  // quando il timer è multiplo di 10, manda un segnale (?)
-  // internal_signal();
-  
-  // Gio: prova segnale ogni 10 t
-  if (disastrOS_time % 10 == 0)
-    printf("INVIO UN SEGNALE\n");
-    // invio vero e proprio (TODO) :D
+
+  // Gio: invocazione dei segnali a quanti prestabiliti
+  if ((disastrOS_time % 50 == 0) || (disastrOS_time % 10 == 0))
+    internal_signal();
   
   internal_schedule();
   setcontext(&running->cpu_state);
@@ -152,8 +149,13 @@ void disastrOS_start(void (*f)(void*), void* f_args, char* logfile){
   syscall_vector[DSOS_CALL_SLEEP]     = internal_sleep;
   syscall_numarg[DSOS_CALL_SLEEP]     = 1;
 
-  syscall_vector[DSOS_CALL_SHUTDOWN]      = internal_shutdown;
-  syscall_numarg[DSOS_CALL_SHUTDOWN]      = 0;
+  syscall_vector[DSOS_CALL_SHUTDOWN]  = internal_shutdown;
+  syscall_numarg[DSOS_CALL_SHUTDOWN]  = 0;
+
+  // Gio: inserisco la syscall per l'invio dei segnali nei due
+  syscall_vector[DSOS_CALL_SENDSIG]   = internal_signal;
+  syscall_numarg[DSOS_CALL_SENDSIG]   = 0;
+
 
   // setup the scheduling lists
   running=0;
@@ -240,6 +242,10 @@ void disastrOS_shutdown() {
 
 void disastrOS_sleep(int sleep_time) {
   disastrOS_syscall(DSOS_CALL_SLEEP, sleep_time);
+}
+//Gio: definizione della nostra syscall
+void disastrOS_sendSignal(int signal_number) {
+  disastrOS_syscall(DSOS_CALL_SENDSIG, signal_number);
 }
 
 int disastrOS_getpid(){

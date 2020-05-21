@@ -18,3 +18,6 @@ void internal_shutdown();
 void internal_schedule();
 
 void internal_sleep();
+
+// Gio: definisco la routine invocata quando il disastrOS invia un segnale
+void internal_signal();

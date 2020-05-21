@@ -21,6 +21,9 @@
 #define DSOS_ESPAWN  -6
 #define DSOS_ESLEEP  -7
 
+// Gio: errore syscall
+#define DSOS_ESIGNAL -8
+
 
 // syscall numbers
 #define DSOS_MAX_SYSCALLS 32
@@ -33,8 +36,8 @@
 #define DSOS_CALL_SLEEP     6
 #define DSOS_CALL_SHUTDOWN  7
 
-// Gio: definiamo la syscall da eseguire (non lo stiamo facendo davvero)
-//#define DSOS_CALL_SENDSIG   8
+// Gio: definiamo la syscall con cui disastrOs invia i segnali
+#define DSOS_CALL_SENDSIG   8
 
 // scheduling
 #define ALPHA 0.5f
