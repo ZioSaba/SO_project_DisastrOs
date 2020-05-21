@@ -43,6 +43,14 @@ void timerHandler(int j, siginfo_t *si, void *old_context) {
 void timerInterrupt(){
   ++disastrOS_time;
   printf("time: %d\n", disastrOS_time);
+  // quando il timer è multiplo di 10, manda un segnale (?)
+  // internal_signal();
+  
+  // Gio: prova segnale ogni 10 t
+  if (disastrOS_time % 10 == 0)
+    printf("INVIO UN SEGNALE\n");
+    // invio vero e proprio (TODO) :D
+  
   internal_schedule();
   setcontext(&running->cpu_state);
 }

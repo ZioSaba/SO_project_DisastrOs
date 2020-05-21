@@ -29,5 +29,7 @@ void disastrOS_spawn(void (*f)(void*), void* args );
 void disastrOS_shutdown();
 void disastrOS_sleep(int);
 
+// Gio: definisco la syscall che invia i segnali 
+
 // debug function, prints the state of the internal system
 void disastrOS_printStatus();

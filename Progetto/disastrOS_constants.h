@@ -2,10 +2,15 @@
 
 #define MAX_NUM_PROCESSES 1024
 #define STACK_SIZE        16384
+
 // signals
 #define MAX_SIGNALS 32
 #define DSOS_SIGCHLD 0x1
 #define DSOS_SIGHUP  0x2
+
+// Gio: definiamo i nostri segnali
+#define DSOS_SIGKILL 0x3
+#define DSOS_SIGMOVUP 0x4 
 
 // errors
 #define DSOS_ESYSCALL_ARGUMENT_OUT_OF_BOUNDS -1
@@ -27,6 +32,9 @@
 #define DSOS_CALL_SPAWN     5
 #define DSOS_CALL_SLEEP     6
 #define DSOS_CALL_SHUTDOWN  7
+
+// Gio: definiamo la syscall da eseguire (non lo stiamo facendo davvero)
+//#define DSOS_CALL_SENDSIG   8
 
 // scheduling
 #define ALPHA 0.5f
