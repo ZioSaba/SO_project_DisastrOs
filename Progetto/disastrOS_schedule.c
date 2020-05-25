@@ -32,5 +32,19 @@ void internal_schedule() {
     next_process->status=Running;
     running=next_process;
   }
+  
+  //printf("/****************************/");
+  printf("STAMPO STACK SEGNALE PROCESSO RUNNING %d\n", running->pid);
+  ListItem* segnale = (ListItem*) running->signal_stack.first;
+  printf("QUALCOSA: %d\n", (int) segnale);
+  while(segnale){
+    printf("%d\n", (int) segnale);
+    segnale = segnale->next;
+    if (segnale == 0)
+      break;
+  }
+  //printf("/****************************/");
+  
+
   //disastrOS_printStatus();
 }

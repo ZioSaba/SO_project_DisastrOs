@@ -6,8 +6,8 @@ TODO:
 5) Fare una handler con uno switch
 
 Pratico:
-1) Definire segnali
-2) Modificare PCB
+1) Definire segnali -> OK
+2) Modificare PCB -> NI
 3) Creare gestore -> file syscall
 4) Impostare timer
 5) Decidere come definire la syscall internal_signals(int signal_number, int PID) , li manda il sistema
