@@ -29,6 +29,15 @@ typedef struct PCB{
   //we are really rude :) the stack is INSIDE the pcb
   //forgive me for the bestiality
   char stack[STACK_SIZE];
+
+  /***************************************************/
+  //ZioS: definisco ciò che verrà usato dal processo quando passa alla gestione del segnale
+  ucontext_t signal_context_sigMovUp;   // contesto per il segnale sigMovUp
+  ucontext_t signal_context_sigKill;    // contesto per il segnale sigKill
+  char signal_stack[STACK_SIZE];        // stack usato dai contesti sopracitati
+  int signal_received[MAX_SIGNALS];     // bitmap per sapere quali segnali sono stati ricevuti
+  int signal_served[MAX_SIGNALS];       // bitmap per sapere quale segnale è servito in un certo momento
+  /***************************************************/
   
   //the one below is a hack for the syscalls
   //in a real system one needs to use the cpu to pass

@@ -56,7 +56,11 @@ PCB* PCB_alloc() {
   //MemoryInfo_init(&pcb->memory);
   //CPUState_init(&pcb->cpu);
 
-   return pcb;
+  /**********************************/
+  //ZioS: settiamo a 0 i due array utilizzati per la ricezione dei segnali e capire quale è servito
+  /**********************************/
+  
+  return pcb;
 }
 
 int PCB_free(PCB* pcb){
