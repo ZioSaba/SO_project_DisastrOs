@@ -29,6 +29,10 @@ ucontext_t interrupt_context;
 ucontext_t trap_context;
 ucontext_t main_context;
 ucontext_t idle_context;
+
+// ZioS: definisco il contesto dei segnali
+ucontext_t signal_context;
+
 int shutdown_now=0; // used for termination
 char system_stack[STACK_SIZE];
 
@@ -46,12 +50,17 @@ void timerInterrupt(){
 
   // Gio: invocazione dei segnali a quanti prestabiliti
   if ((disastrOS_time % 50 == 0) || (disastrOS_time % 10 == 0))
-    internal_signal();
+    swapcontext(&interrupt_context, &signal_context);
+    //internal_signal();
   
   internal_schedule();
   setcontext(&running->cpu_state);
 }
 
+// ZioS: funzione invocata dal contesto dei segnali
+void signalInterrupt(){
+  printf("SONO NEL CONTESTO DEL SENGALE, YEEEEE!!!!\n");
+}
 
 //set up the signal action
 void setupSignals(void) {
@@ -161,7 +170,7 @@ void disastrOS_start(void (*f)(void*), void* f_args, char* logfile){
   running=0;
   List_init(&ready_list);
   List_init(&waiting_list);
-    List_init(&zombie_list);
+  List_init(&zombie_list);
   List_init(&resources_list);
   List_init(&timer_list);
 
@@ -189,8 +198,13 @@ void disastrOS_start(void (*f)(void*), void* f_args, char* logfile){
   sigemptyset(&interrupt_context.uc_sigmask);
   makecontext(&interrupt_context, timerInterrupt, 0); //< this is a context for the interrupt
 
-
-  
+  /************************************************************/
+  // ZioS: impostiamo il contesto per la gestione dei segnali
+  disastrOS_debug("setting entry point for timer interrupt... ");
+  signal_context=trap_context;
+  signal_context.uc_link = &main_context;
+  makecontext(&signal_context, signalInterrupt, 0); 
+  /************************************************************/
 
   /* STARTING FIRST PROCESS AND IDLING*/
   running=PCB_alloc();

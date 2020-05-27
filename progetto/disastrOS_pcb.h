@@ -29,9 +29,6 @@ typedef struct PCB{
   //we are really rude :) the stack is INSIDE the pcb
   //forgive me for the bestiality
   char stack[STACK_SIZE];
-
-  // ZioS: definiamo uno stack di tipologia LIFO O FIFO (?) per l'immagazzinamento dei segnali
-  ListHead signal_stack;
   
   //the one below is a hack for the syscalls
   //in a real system one needs to use the cpu to pass
