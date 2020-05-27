@@ -15,6 +15,10 @@ void internal_sleep(){
   int cycles_to_sleep=running->syscall_args[0];
   int wake_time=disastrOS_time+cycles_to_sleep;
   
+
+  // ZioS: mettere un controllo che pone il waketime diverso, deve andare in testa 
+
+
   TimerItem* new_timer=TimerList_add(&timer_list, wake_time, running);
   if (! new_timer) {
     printf("no new timer!!!\n");

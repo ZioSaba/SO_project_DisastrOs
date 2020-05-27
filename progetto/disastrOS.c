@@ -51,16 +51,13 @@ void timerInterrupt(){
 
   // Gio: invocazione dei segnali a quanti prestabiliti
   if ((disastrOS_time % 50 == 0) || (disastrOS_time % 10 == 0))
-    swapcontext(&interrupt_context, &signal_sigMovUp_context);
-    //internal_signal();
+    internal_signal();
   
   internal_schedule();
-  setcontext(&running->cpu_state);
-}
 
-// ZioS: funzione invocata dal contesto dei segnali
-void signalInterrupt(){
-  printf("SONO NEL CONTESTO DEL SENGALE, YEEEEE!!!!\n");
+  if (running->pid != 1) disastrOS_printPCB_signals();
+
+  setcontext(&running->cpu_state);
 }
 
 //set up the signal action
@@ -201,15 +198,15 @@ void disastrOS_start(void (*f)(void*), void* f_args, char* logfile){
 
   /************************************************************/
   // ZioS: impostiamo il contesto per la gestione dei segnali
-  disastrOS_debug("setting entry point for DSOS_SIGMOVUP interrupt... ");
-  signal_sigMovUp_context=trap_context;
-  signal_sigMovUp_context.uc_link = &main_context;
-  makecontext(&signal_sigMovUp_context, signalInterrupt, 0);
+  //disastrOS_debug("setting entry point for DSOS_SIGMOVUP interrupt... ");
+  //signal_sigMovUp_context=trap_context;
+  //signal_sigMovUp_context.uc_link = &main_context;
+  //makecontext(&signal_sigMovUp_context, signalInterrupt, 0);
 
-  disastrOS_debug("setting entry point for DSOS_SIGMOVUP interrupt... ");
-  signal_sigKill_context=trap_context;
-  signal_sigKill_context.uc_link = &main_context;
-  makecontext(&signal_sigKill_context, signalInterrupt, 0); 
+  //disastrOS_debug("setting entry point for DSOS_SIGMOVUP interrupt... ");
+  //signal_sigKill_context=trap_context;
+  //signal_sigKill_context.uc_link = &main_context;
+  //makecontext(&signal_sigKill_context, signalInterrupt, 0); 
   /************************************************************/
 
   /* STARTING FIRST PROCESS AND IDLING*/
@@ -291,3 +288,14 @@ void disastrOS_printStatus(){
   PCBList_print(&zombie_list);
   printf("\n***********************************************\n\n");
 };
+
+void disastrOS_printPCB_signals(){
+  printf("/*******RUNNING SIGNALS STATUS*******/\n");
+  printf("Running: ");
+  if (running)  printf("%d\n", running->pid);
+  printf("Signal Mask status: %d\n", running->signals);
+  printf("Signals receiver: \n");
+  printf("SIGKILL: %d\n", running->signal_received[DSOS_SIGKILL]);
+  printf("SIGMOVUP: %d\n", running->signal_received[DSOS_SIGMOVUP]);
+  printf("\n***********************************************\n\n");
+}

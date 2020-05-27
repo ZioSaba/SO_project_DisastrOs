@@ -1,6 +1,12 @@
 #include <assert.h>
 #include <stdio.h>
 
+/******************************/
+//ZioS: aggiunta di librerie
+#include <string.h>
+/******************************/
+
+
 #include "pool_allocator.h"
 #include "disastrOS_pcb.h"
 #include "disastrOS.h"
@@ -57,7 +63,9 @@ PCB* PCB_alloc() {
   //CPUState_init(&pcb->cpu);
 
   /**********************************/
-  //ZioS: settiamo a 0 i due array utilizzati per la ricezione dei segnali e capire quale è servito
+  //ZioS: settiamo a 0 i due array utilizzati,quello per la ricezione dei segnali e quello per capire quale segnale è servito
+  memset(pcb->signal_served, 0, MAX_SIGNALS*sizeof(int));
+  memset(pcb->signal_received, 0, MAX_SIGNALS*sizeof(int));
   /**********************************/
   
   return pcb;
