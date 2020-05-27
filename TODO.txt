@@ -15,6 +15,9 @@ Pratico:
 7) Creare un contesto per ogni segnale, ma fanno tutti riferiemnto allo stesso stack
 8) Maschera dei segnali
 
+Lo swap dei contesti va fatto necessariamente nel file disastrOS.c
+Vedere se possibile mettere le funzioni invocate dal contesto in un altro file (?)
+
 L'invio dei segnali viene fatto sempre sul processo in coda alla ready_list, che viene spostato in testa così da eseguire
 subito il segnale inviato 
 
