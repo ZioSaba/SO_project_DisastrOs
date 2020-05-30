@@ -41,6 +41,15 @@ sigset_t signal_set;                       // process wide signal mask
 char signal_stack[STACK_SIZE];     
 volatile int disastrOS_time=0;
 
+// Gio: Definiamo le funzioni invocate dai contesti
+void signalInterrupt_Kill(){
+  sigKill();
+}
+
+void signalInterrupt_MovUp(){
+  sigMovUp();
+}
+
 void timerHandler(int j, siginfo_t *si, void *old_context) {
   swapcontext(&running->cpu_state, &interrupt_context);
 }
@@ -56,6 +65,11 @@ void timerInterrupt(){
   internal_schedule();
 
   if (running->pid != 1) disastrOS_printPCB_signals();
+
+  //METTERE IL CONTROLLO SE CI SONO SEGNALI ATTIVI, IN CASO FARE LO SWAP CONTEXT
+  if (running->signal_received[DSOS_SIGMOVUP]){
+    setcontext(&signal_sigMovUp_context);
+  }
 
   setcontext(&running->cpu_state);
 }
@@ -198,15 +212,21 @@ void disastrOS_start(void (*f)(void*), void* f_args, char* logfile){
 
   /************************************************************/
   // ZioS: impostiamo il contesto per la gestione dei segnali
-  //disastrOS_debug("setting entry point for DSOS_SIGMOVUP interrupt... ");
-  //signal_sigMovUp_context=trap_context;
-  //signal_sigMovUp_context.uc_link = &main_context;
-  //makecontext(&signal_sigMovUp_context, signalInterrupt, 0);
+  disastrOS_debug("setting entry point for DSOS_SIGMOVUP interrupt... ");
+  getcontext(&running->signal_context_sigMovUp);
+  running->signal_context_sigMovUp.uc_stack.ss_sp = running->signal_stack;
+  running->signal_context_sigMovUp.uc_stack.ss_size = STACK_SIZE;
+  running->signal_context_sigMovUp.uc_stack.ss_flags = 0;
+  running->signal_context_sigMovUp.uc_link = &main_context;
+  makecontext(&running->signal_context_sigMovUp, signalInterrupt_MovUp, 0);
 
-  //disastrOS_debug("setting entry point for DSOS_SIGMOVUP interrupt... ");
-  //signal_sigKill_context=trap_context;
-  //signal_sigKill_context.uc_link = &main_context;
-  //makecontext(&signal_sigKill_context, signalInterrupt, 0); 
+  disastrOS_debug("setting entry point for DSOS_SIGKILL interrupt... ");
+  getcontext(&running->signal_context_sigKill);
+  running->signal_context_sigKill.uc_stack.ss_sp = running->signal_stack;
+  running->signal_context_sigKill.uc_stack.ss_size = STACK_SIZE;
+  running->signal_context_sigKill.uc_stack.ss_flags = 0;
+  running->signal_context_sigKill.uc_link = &main_context;
+  makecontext(&running->signal_context_sigKill, signalInterrupt_Kill, 0); 
   /************************************************************/
 
   /* STARTING FIRST PROCESS AND IDLING*/

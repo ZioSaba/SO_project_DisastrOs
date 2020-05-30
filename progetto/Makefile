@@ -23,7 +23,9 @@ OBJS=pool_allocator.o\
      disastrOS_shutdown.o\
      disastrOS_schedule.o\
      disastrOS_preempt.o\
-	 disastrOS_sendSignal.o
+	 disastrOS_sendSignal.o\
+	 sigMovUp.o\
+	 sigKill.o
 
 LIBS=libdisastrOS.a
 
