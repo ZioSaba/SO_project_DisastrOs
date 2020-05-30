@@ -43,17 +43,17 @@ void internal_spawn(){
   makecontext(&new_pcb->cpu_state, (void(*)())  new_function, 1, (void*)running->syscall_args[1]);
 
   // ZioS: impostiamo il contesto per la gestione dei segnali
-  disastrOS_debug("setting entry point for DSOS_SIGMOVUP interrupt... ");
+  //disastrOS_debug("setting entry point for DSOS_SIGMOVUP interrupt... ");
   getcontext(&new_pcb->signal_context_sigMovUp);
   new_pcb->signal_context_sigMovUp.uc_stack.ss_sp = new_pcb->signal_stack;
   new_pcb->signal_context_sigMovUp.uc_stack.ss_size = STACK_SIZE;
   new_pcb->signal_context_sigMovUp.uc_stack.ss_flags = 0;
   new_pcb->signal_context_sigMovUp.uc_link = &main_context;
-  makecontext(&new_pcb->signal_context_sigMovUp, (void(*)())  new_function, 1, (void*)running->syscall_args[1]);
+  makecontext(&new_pcb->signal_context_sigMovUp, signalInterrupt_MovUp, 1, (void*)running->syscall_args[1]);
 
 
-  disastrOS_debug("setting entry point for DSOS_SIGKILL interrupt... ");
+  //disastrOS_debug("setting entry point for DSOS_SIGKILL interrupt... ");
   // Gio: il secondo contesto non serve rinizializzarlo ma basta copiare i parametri di quello precedentemente definito
   new_pcb->signal_context_sigKill = new_pcb->signal_context_sigMovUp;
-  makecontext(&new_pcb->signal_context_sigKill, (void(*)())  new_function, 1, (void*)running->syscall_args[1]);
+  makecontext(&new_pcb->signal_context_sigKill, signalInterrupt_Kill, 1, (void*)running->syscall_args[1]);
 }

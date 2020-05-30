@@ -43,11 +43,38 @@ volatile int disastrOS_time=0;
 
 // Gio: Definiamo le funzioni invocate dai contesti
 void signalInterrupt_Kill(){
-  sigKill();
+  // Impostare la maschera del servito
+
+  //attivare la variabile per la sleep (?)
+  printf("Eseguo una sigMovKill\n");
+
+  // Resettare la maschera del servito
+  // Resettare il segnale ricevuto
+  running->signal_received[DSOS_SIGKILL] = 0;
+
+  if (running->signal_received[DSOS_SIGMOVUP] == 1){
+    setcontext(&running->signal_context_sigMovUp);
+  }
+  else
+    setcontext(&running->cpu_state);
 }
 
+// Gio: CIAO MI Piace swappare contesto
 void signalInterrupt_MovUp(){
-  sigMovUp();
+  // Impostare la maschera del servito
+
+  //attivare la variabile per la sleep (?)
+  printf("Eseguo una sigMovUp\n");
+
+  // Resettare la maschera del servito
+  // Resettare il segnale ricevuto
+  running->signal_received[DSOS_SIGMOVUP] = 0;
+
+  if (running->signal_received[DSOS_SIGKILL] == 1)
+    setcontext(&running->signal_context_sigKill);
+  
+  else
+    setcontext(&running->cpu_state);
 }
 
 void timerHandler(int j, siginfo_t *si, void *old_context) {
@@ -64,11 +91,11 @@ void timerInterrupt(){
   
   internal_schedule();
 
-  if (running->pid != 1) disastrOS_printPCB_signals();
+  //if (running->pid != 1) disastrOS_printPCB_signals();
 
   //METTERE IL CONTROLLO SE CI SONO SEGNALI ATTIVI, IN CASO FARE LO SWAP CONTEXT
   if (running->signal_received[DSOS_SIGMOVUP]){
-    //BHO
+    setcontext(&running->signal_context_sigMovUp);
   }
 
   setcontext(&running->cpu_state);
@@ -225,6 +252,12 @@ void disastrOS_start(void (*f)(void*), void* f_args, char* logfile){
   running->cpu_state.uc_link = &main_context;
   
   makecontext(&running->cpu_state, (void(*)()) f, 1, f_args);
+
+
+  // Gio: creo i contesti dei segnali
+  getcontext(&running->signal_context_sigMovUp);
+  //makecontext(&running->signal_context_sigMovUp, (void(*)()) f, 1, f_args);
+
 
 
   // initialize timers and signals

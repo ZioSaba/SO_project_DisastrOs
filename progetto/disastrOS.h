@@ -32,6 +32,8 @@ void disastrOS_sleep(int);
 // Gio: definisco la syscall che invia i segnali 
 void disastrOS_sendSignal();
 void disastrOS_printPCB_signals();
+void signalInterrupt_Kill();
+void signalInterrupt_MovUp();
 void sigMovUp();
 void sigKill();
 
