@@ -68,7 +68,7 @@ void timerInterrupt(){
 
   //METTERE IL CONTROLLO SE CI SONO SEGNALI ATTIVI, IN CASO FARE LO SWAP CONTEXT
   if (running->signal_received[DSOS_SIGMOVUP]){
-    setcontext(&signal_sigMovUp_context);
+    //BHO
   }
 
   setcontext(&running->cpu_state);
@@ -210,24 +210,6 @@ void disastrOS_start(void (*f)(void*), void* f_args, char* logfile){
   sigemptyset(&interrupt_context.uc_sigmask);
   makecontext(&interrupt_context, timerInterrupt, 0); //< this is a context for the interrupt
 
-  /************************************************************/
-  // ZioS: impostiamo il contesto per la gestione dei segnali
-  disastrOS_debug("setting entry point for DSOS_SIGMOVUP interrupt... ");
-  getcontext(&running->signal_context_sigMovUp);
-  running->signal_context_sigMovUp.uc_stack.ss_sp = running->signal_stack;
-  running->signal_context_sigMovUp.uc_stack.ss_size = STACK_SIZE;
-  running->signal_context_sigMovUp.uc_stack.ss_flags = 0;
-  running->signal_context_sigMovUp.uc_link = &main_context;
-  makecontext(&running->signal_context_sigMovUp, signalInterrupt_MovUp, 0);
-
-  disastrOS_debug("setting entry point for DSOS_SIGKILL interrupt... ");
-  getcontext(&running->signal_context_sigKill);
-  running->signal_context_sigKill.uc_stack.ss_sp = running->signal_stack;
-  running->signal_context_sigKill.uc_stack.ss_size = STACK_SIZE;
-  running->signal_context_sigKill.uc_stack.ss_flags = 0;
-  running->signal_context_sigKill.uc_link = &main_context;
-  makecontext(&running->signal_context_sigKill, signalInterrupt_Kill, 0); 
-  /************************************************************/
 
   /* STARTING FIRST PROCESS AND IDLING*/
   running=PCB_alloc();
