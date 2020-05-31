@@ -34,8 +34,6 @@ void disastrOS_sendSignal();
 void disastrOS_printPCB_signals();
 void signalInterrupt_Kill();
 void signalInterrupt_MovUp();
-void sigMovUp();
-void sigKill();
 
 // debug function, prints the state of the internal system
 void disastrOS_printStatus();

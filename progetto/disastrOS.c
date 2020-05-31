@@ -9,6 +9,7 @@
 #include "disastrOS.h"
 #include "disastrOS_syscalls.h"
 #include "disastrOS_timer.h"
+#include "signals.h"
 
 FILE* log_file=NULL;
 PCB* init_pcb;
@@ -43,38 +44,12 @@ volatile int disastrOS_time=0;
 
 // Gio: Definiamo le funzioni invocate dai contesti
 void signalInterrupt_Kill(){
-  // Impostare la maschera del servito
-
-  //attivare la variabile per la sleep (?)
-  printf("Eseguo una sigMovKill\n");
-
-  // Resettare la maschera del servito
-  // Resettare il segnale ricevuto
-  running->signal_received[DSOS_SIGKILL] = 0;
-
-  if (running->signal_received[DSOS_SIGMOVUP] == 1){
-    setcontext(&running->signal_context_sigMovUp);
-  }
-  else
-    setcontext(&running->cpu_state);
+  sigKill();
 }
 
 // Gio: CIAO MI Piace swappare contesto
 void signalInterrupt_MovUp(){
-  // Impostare la maschera del servito
-
-  //attivare la variabile per la sleep (?)
-  printf("Eseguo una sigMovUp\n");
-
-  // Resettare la maschera del servito
-  // Resettare il segnale ricevuto
-  running->signal_received[DSOS_SIGMOVUP] = 0;
-
-  if (running->signal_received[DSOS_SIGKILL] == 1)
-    setcontext(&running->signal_context_sigKill);
-  
-  else
-    setcontext(&running->cpu_state);
+  sigMovUp();
 }
 
 void timerHandler(int j, siginfo_t *si, void *old_context) {
@@ -93,11 +68,16 @@ void timerInterrupt(){
 
   //if (running->pid != 1) disastrOS_printPCB_signals();
 
-  //METTERE IL CONTROLLO SE CI SONO SEGNALI ATTIVI, IN CASO FARE LO SWAP CONTEXT
-  if (running->signal_received[DSOS_SIGMOVUP]){
-    setcontext(&running->signal_context_sigMovUp);
+   //Gio:implemento controllo segnali attivi+swap in caso
+  for(int i=0;i<MAX_SIGNALS; i++){
+        if (running->signal_received[DSOS_SIGMOVUP]){
+             setcontext(&running->signal_context_sigMovUp);
+  	}
+	else if(running->signal_received[DSOS_SIGKILL]){
+	      setcontext(&running->signal_context_sigKill);
+	}
   }
-
+ 
   setcontext(&running->cpu_state);
 }
 
@@ -256,6 +236,7 @@ void disastrOS_start(void (*f)(void*), void* f_args, char* logfile){
 
   // Gio: creo i contesti dei segnali
   getcontext(&running->signal_context_sigMovUp);
+  getcontext(&running->signal_context_sigKill);
   //makecontext(&running->signal_context_sigMovUp, (void(*)()) f, 1, f_args);
 
 
