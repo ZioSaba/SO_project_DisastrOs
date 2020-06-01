@@ -3,15 +3,20 @@
 #include "signals.h"
 
 void sigMovUp(){
-  // Impostare la maschera del servito
+  // ZioS: Impostare la maschera del servito
+  running->signal_served[DSOS_SIGMOVUP] = 1;
 
-  //attivare la variabile per la sleep (?)
+  // ZioS: setto a true la variabile relativa al segnale
   printf("Eseguo una sigMovUp\n");
+  running->movUp = true;
 
-  // Resettare la maschera del servito
-  // Resettare il segnale ricevuto
+  // ZioS: Resetto la maschera del servito
+  running->signal_served[DSOS_SIGMOVUP] = 0;
+
+  // ZioS: Resettare il segnale ricevuto
   running->signal_received[DSOS_SIGMOVUP] = 0;
 
+  // ZioS: verifico se nel frattempo ho ricevuto un segnale di sigKill
   if (running->signal_received[DSOS_SIGKILL] == 1)
     setcontext(&running->signal_context_sigKill);
   

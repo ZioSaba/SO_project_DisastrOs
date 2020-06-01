@@ -1,5 +1,6 @@
 #pragma once
 #include <ucontext.h> // this is the cpu status
+#include <stdbool.h>
 #include "disastrOS_constants.h"
 #include "linked_list.h"
 #include "disastrOS_timer.h"
@@ -37,6 +38,7 @@ typedef struct PCB{
   char signal_stack[STACK_SIZE];        // stack usato dai contesti sopracitati
   int signal_received[MAX_SIGNALS];     // bitmap per sapere quali segnali sono stati ricevuti
   int signal_served[MAX_SIGNALS];       // bitmap per sapere quale segnale è servito in un certo momento
+  bool movUp;                           // variabile settata dal segnale sigMovUp
   /***************************************************/
   
   //the one below is a hack for the syscalls

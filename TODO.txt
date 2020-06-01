@@ -1,28 +1,8 @@
-TODO:
-1) Fare un wrapper durante la gestinoe del segnale, in modo che il bit della maschera venga settato a 0 solo alla fine
-3) Implementare giusto 2 segnali (magari tipo la kill ed uno che gli notifica tipo "CIAO", non so)
-4) Stack frame per la gestione dei segnali
-5) Fare una handler con uno switch
-
-Pratico:
-1) Definire segnali -> OK
-2) Modificare PCB -> Mettere uno stack per ogni processo, tutti i segnali faranno riferimento a quello stack
-3) Creare gestore -> file syscall
-5) Decidere come definire la syscall internal_signals -> DA RIVEDERE
-7) Creare un contesto per ogni segnale, ma fanno tutti riferiemnto allo stesso stack
-8) Maschera dei segnali
-
-Lo swap dei contesti va fatto necessariamente nel file disastrOS.c
-Vedere se possibile mettere le funzioni invocate dal contesto in un altro file (?)
-Definire i contesti dei segnali nel momento in cui vengono usati e poi liberarsene o dichiararli prima(?)
-Definire le funzioni invocate dai contesti, ovvero il vero e proprio handler
-
-
 L'invio dei segnali viene fatto sempre sul processo in coda alla waiting_list 
 
 Definizione dei segnali
 ->sigKill: uccide il processo in modo brutale e cattivo
-->sigMoveHead: quando il processo esce dallo stato di waiting viene abilitata variabile 
+->sigMoveUp: quando il processo esce dallo stato di waiting viene abilitata variabile 
                che, al prossimo sleep, provvede a dimezzare il suo sleeptime(?) oppure lo mette in testa alla waiting_list (?)
 
 

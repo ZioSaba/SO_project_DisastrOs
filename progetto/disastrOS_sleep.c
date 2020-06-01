@@ -13,10 +13,24 @@ void internal_sleep(){
     return;
   }
   int cycles_to_sleep=running->syscall_args[0];
-  int wake_time=disastrOS_time+cycles_to_sleep;
+
+  printf("Timesleep previsto = %d\n",cycles_to_sleep);
+
+  // ZioS: imposto un wake time diverso a seconda che sia stato già ricevuto un sigMovUp dal processo oppure no
+  int wake_time;
+  if (running->movUp){
+    printf("Il processo in running ha precedentemente ricevuto un sigMovUp, quindi dimezzo il suo sleepTime\n");
+    wake_time=disastrOS_time+(cycles_to_sleep/2);
+    printf("waketime = %d\n",wake_time);
+    running->movUp=false;
+  }
+  else{
+    wake_time=disastrOS_time+cycles_to_sleep;
+    printf("waketime = %d\n",wake_time);
+  }
   
 
-  // ZioS: mettere un controllo che pone il waketime diverso, deve andare in testa 
+   
 
 
   TimerItem* new_timer=TimerList_add(&timer_list, wake_time, running);

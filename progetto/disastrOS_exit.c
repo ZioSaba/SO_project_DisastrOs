@@ -35,6 +35,11 @@ void internal_exit(){
   List_insert(&zombie_list, zombie_list.last, (ListItem*) running);
   running->parent->signals |= (DSOS_SIGCHLD & running->parent->signals_mask);
 
+  //Gio:risetto la maschera
+   // running->signal_served[DSOS_SIGKILL] = 0;
+  //  running->signal_received[DSOS_SIGKILL] = 0;
+
+
   // if the parent was waiting for this process to die
   if (running->parent->status==Waiting
   // since he called  wait or waitpid, we wake him up
@@ -63,6 +68,7 @@ void internal_exit(){
     while(aux){
       TimerItem* timer=(TimerItem*) aux;
       aux=aux->next;
+      
       if (timer->pcb==running){
 	ListItem* detach_result=List_detach(&timer_list, (ListItem*)timer);
 	assert(detach_result);
@@ -72,12 +78,14 @@ void internal_exit(){
     
     // the process finally dies
     ListItem* suppressed_item = List_detach(&zombie_list, (ListItem*) running);
+
+    
+
     PCB_free((PCB*) suppressed_item);
     running=parent;
   } else {
 
-    //Gio:risetto la maschera
-    running->signal_served[DSOS_SIGKILL] = 0;
+    
     
     // we put the first ready process in running 
     PCB* next_running=(PCB*) List_detach(&ready_list, ready_list.first);

@@ -66,6 +66,9 @@ PCB* PCB_alloc() {
   //ZioS: settiamo a 0 i due array utilizzati,quello per la ricezione dei segnali e quello per capire quale segnale è servito
   memset(pcb->signal_served, 0, MAX_SIGNALS*sizeof(int));
   memset(pcb->signal_received, 0, MAX_SIGNALS*sizeof(int));
+
+  //ZioS: imposto a false la variabile che utlizza il segnale sigMovUp
+  pcb->movUp = false;
   /**********************************/
   
   return pcb;
