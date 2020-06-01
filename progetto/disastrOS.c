@@ -10,6 +10,7 @@
 #include "disastrOS_syscalls.h"
 #include "disastrOS_timer.h"
 #include "signals.h"
+#include "disastrOS_pcb.h"
 
 FILE* log_file=NULL;
 PCB* init_pcb;
@@ -66,16 +67,28 @@ void timerInterrupt(){
   
   internal_schedule();
 
-  //if (running->pid != 1) disastrOS_printPCB_signals();
+  if (running->pid != 1) disastrOS_printPCB_signals();
 
-   //Gio:implemento controllo segnali attivi+swap in caso
-  for(int i=0;i<MAX_SIGNALS; i++){
-        if (running->signal_received[DSOS_SIGMOVUP]){
-             setcontext(&running->signal_context_sigMovUp);
-  	}
-	else if(running->signal_received[DSOS_SIGKILL]){
-	      setcontext(&running->signal_context_sigKill);
-	}
+  
+  //Gio:implemento controllo segnali attivi+swap in caso
+  for(int i=0;i<MAX_SIGNALS;i++){
+    switch (i)
+    {
+    case DSOS_SIGKILL:
+      if (running->signal_received[i] == 1 && running->signal_served[i] == 0)
+        setcontext(&running->signal_context_sigKill);
+      break;
+
+    case DSOS_SIGMOVUP:
+      if (running->signal_received[i] == 1 && running->signal_served[i] == 0)
+        setcontext(&running->signal_context_sigMovUp);
+      break;
+    
+    default:
+      // Atri segnali non ancora implementati
+      break;
+    }
+    
   }
  
   setcontext(&running->cpu_state);
