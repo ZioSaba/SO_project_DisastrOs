@@ -3,7 +3,7 @@ L'invio dei segnali viene fatto sempre sul processo in coda alla waiting_list
 Definizione dei segnali
 ->sigKill: uccide il processo in modo brutale e cattivo
 ->sigMoveUp: quando il processo esce dallo stato di waiting viene abilitata variabile 
-               che, al prossimo sleep, provvede a dimezzare il suo sleeptime(?) oppure lo mette in testa alla waiting_list (?)
+               che, al prossimo sleep, provvede a dimezzare il suo sleeptime
 
 
 
