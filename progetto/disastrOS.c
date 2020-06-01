@@ -62,12 +62,12 @@ void timerInterrupt(){
   printf("time: %d\n", disastrOS_time);
 
   // Gio: invocazione dei segnali a quanti prestabiliti
-  if ((disastrOS_time % 50 == 0) || (disastrOS_time % 10 == 0))
+  if ((disastrOS_time % TIME_KILL == 0) || (disastrOS_time % TIME_MOVUP == 0))
     internal_signal();
   
   internal_schedule();
 
-  if (running->pid != 1) disastrOS_printPCB_signals();
+  //if (running->pid != 1) disastrOS_printPCB_signals();
 
   
   //Gio:implemento controllo segnali attivi+swap in caso

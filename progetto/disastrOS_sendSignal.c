@@ -4,10 +4,11 @@
 #include <stdio.h>
 #include "disastrOS.h"
 #include "disastrOS_syscalls.h"
+#include "signals.h"
 
 // Gio: il timer invia il segnale di kill o sposta in testa l'ultimo processo a seconda del valore del quanto temporale
 void internal_signal(){
-    if (disastrOS_time % 50 == 0){
+    if (disastrOS_time % TIME_KILL == 0){
     
         if (ready_list.first != 0){
             PCB* last_pcb = (PCB*) ready_list.last;
@@ -40,7 +41,7 @@ void internal_signal(){
         }
         // ZioS: qui non ci dovrebbe arrivare mai
     }
-    else if (disastrOS_time % 10 == 0){
+    else if (disastrOS_time % TIME_MOVUP == 0){
     
         if (ready_list.first != 0){
             PCB* last_pcb = (PCB*) ready_list.last;

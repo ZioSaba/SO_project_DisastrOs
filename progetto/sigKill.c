@@ -1,20 +1,18 @@
 #include "disastrOS_constants.h"
 #include "disastrOS_globals.h"
 #include "signals.h"
+#include "disastrOS_syscalls.h"
 
 void sigKill(){
-  // Impostare la maschera del servito
+  // Gio: Impostare la maschera del servito
+  running->signal_served[DSOS_SIGKILL] = 1;
+  
+  printf("Eseguo una sigKill\n");
 
-  //attivare la variabile per la sleep (?)
-  printf("Eseguo una sigMovKill\n");
-
-  // Resettare la maschera del servito
-  // Resettare il segnale ricevuto
-  running->signal_received[DSOS_SIGKILL] = 0;
-
-  if (running->signal_received[DSOS_SIGMOVUP] == 1){
-    setcontext(&running->signal_context_sigMovUp);
-  }
-  else
-    setcontext(&running->cpu_state);
+  // Gio: resetto la maschera del servito
+  //running->signal_served[DSOS_SIGKILL] = 0;
+  
+  disastrOS_exit(disastrOS_getpid()+1);
+  setcontext(&running->cpu_state);
+  
 }

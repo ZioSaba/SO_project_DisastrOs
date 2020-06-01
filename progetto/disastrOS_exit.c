@@ -75,6 +75,10 @@ void internal_exit(){
     PCB_free((PCB*) suppressed_item);
     running=parent;
   } else {
+
+    //Gio:risetto la maschera
+    running->signal_served[DSOS_SIGKILL] = 0;
+    
     // we put the first ready process in running 
     PCB* next_running=(PCB*) List_detach(&ready_list, ready_list.first);
     assert(next_running);
