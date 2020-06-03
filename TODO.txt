@@ -8,3 +8,15 @@ Definizione dei segnali
 
 
 PER EVITARE DI RIMETTERE LE CREDENZIALI: $git config credential.helper store
+
+
+1) Elimina le makecontext dal file disastrOs.spawn e mettile tutte insieme nella
+   syscall della sendSignal, ossia creo il contesto per il processo a cui l'ho mandato
+   nel momento in cui lo riceve
+
+2) Far diventare i file sigMoveUp e sigKill(da cambiare) dei wrapper che:
+   -> all'inizio settano il bit della maschera del servito
+   -> esegue l'handler del segnale
+   -> resetta la machera del servito 
+
+3) Rivedere la gestione dei contesti

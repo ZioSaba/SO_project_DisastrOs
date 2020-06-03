@@ -35,11 +35,6 @@ void internal_exit(){
   List_insert(&zombie_list, zombie_list.last, (ListItem*) running);
   running->parent->signals |= (DSOS_SIGCHLD & running->parent->signals_mask);
 
-  //Gio:risetto la maschera
-   // running->signal_served[DSOS_SIGKILL] = 0;
-  //  running->signal_received[DSOS_SIGKILL] = 0;
-
-
   // if the parent was waiting for this process to die
   if (running->parent->status==Waiting
   // since he called  wait or waitpid, we wake him up

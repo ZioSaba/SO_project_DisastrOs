@@ -45,12 +45,26 @@ volatile int disastrOS_time=0;
 
 // Gio: Definiamo le funzioni invocate dai contesti
 void signalInterrupt_Kill(){
+
+  // ZioS: Impostare la maschera del servito
+  running->signal_served[DSOS_SIGKILL] = 1;
+
   sigKill();
+
+  // ZioS: Resettare il segnale ricevuto
+  running->signal_received[DSOS_SIGKILL] = 0;
 }
 
 // Gio: CIAO MI Piace swappare contesto
 void signalInterrupt_MovUp(){
+
+  // ZioS: Impostare la maschera del servito
+  running->signal_served[DSOS_SIGMOVUP] = 1;
+
   sigMovUp();
+
+  // ZioS: Resettare il segnale ricevuto
+  running->signal_received[DSOS_SIGMOVUP] = 0;
 }
 
 void timerHandler(int j, siginfo_t *si, void *old_context) {
