@@ -20,4 +20,4 @@ PER EVITARE DI RIMETTERE LE CREDENZIALI: $git config credential.helper store
 3) Rivedere la gestione dei contesti !!!!IMPORTANTE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    Creare un nuovo contesto che farà da mega gestore dei segnali e fare la setcontext dal contesto dell'interrupt a quello nuovo (vedere come fare)
 
-4) Resettare la variabile signals a 0 se ho gestito tutti i segnali
+4) Resettare la variabile signals a 0 se ho gestito tutti i segnali!
