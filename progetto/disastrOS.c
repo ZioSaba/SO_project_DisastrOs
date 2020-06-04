@@ -52,7 +52,11 @@ void signalInterrupt_Kill(){
   sigKill();
 
   // ZioS: Resettare il segnale ricevuto
+  running->signal_served[DSOS_SIGKILL] = 0;
   running->signal_received[DSOS_SIGKILL] = 0;
+  setcontext(&running->cpu_state);
+
+  //swapcontext(&running->signal_context_sigKill, &interrupt_context);
 }
 
 // Gio: CIAO MI Piace swappare contesto
@@ -64,7 +68,11 @@ void signalInterrupt_MovUp(){
   sigMovUp();
 
   // ZioS: Resettare il segnale ricevuto
+  running->signal_served[DSOS_SIGMOVUP] = 0;
   running->signal_received[DSOS_SIGMOVUP] = 0;
+
+  setcontext(&running->cpu_state);
+  //swapcontext(&running->signal_context_sigMovUp, &interrupt_context);
 }
 
 void timerHandler(int j, siginfo_t *si, void *old_context) {
@@ -81,7 +89,7 @@ void timerInterrupt(){
   
   internal_schedule();
 
-  //if (running->pid != 1) disastrOS_printPCB_signals();
+  // if (running->pid != 1) disastrOS_printPCB_signals();
 
   
   //Gio:implemento controllo segnali attivi+swap in caso
@@ -90,11 +98,13 @@ void timerInterrupt(){
     {
     case DSOS_SIGKILL:
       if (running->signal_received[i] == 1 && running->signal_served[i] == 0)
+        //getcontext(&interrupt_context);
         setcontext(&running->signal_context_sigKill);
       break;
 
     case DSOS_SIGMOVUP:
       if (running->signal_received[i] == 1 && running->signal_served[i] == 0)
+        //getcontext(&interrupt_context);
         setcontext(&running->signal_context_sigMovUp);
       break;
     
@@ -259,13 +269,6 @@ void disastrOS_start(void (*f)(void*), void* f_args, char* logfile){
   running->cpu_state.uc_link = &main_context;
   
   makecontext(&running->cpu_state, (void(*)()) f, 1, f_args);
-
-
-  // Gio: creo i contesti dei segnali
-  getcontext(&running->signal_context_sigMovUp);
-  getcontext(&running->signal_context_sigKill);
-  //makecontext(&running->signal_context_sigMovUp, (void(*)()) f, 1, f_args);
-
 
 
   // initialize timers and signals

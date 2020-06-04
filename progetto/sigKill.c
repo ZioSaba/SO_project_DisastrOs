@@ -6,8 +6,5 @@
 void sigKill(){
   
   printf("Eseguo una sigKill\n");
-
-  //disastrOS_exit(disastrOS_getpid()+1);
-  setcontext(&running->cpu_state);
   
 }
