@@ -26,7 +26,8 @@ OBJS=pool_allocator.o\
      disastrOS_preempt.o\
      disastrOS_sendSignal.o\
      sigMovUp.o\
-     sigKill.o
+     sigKill.o\
+     signalMakeContext.o
 
 
 LIBS=libdisastrOS.a

@@ -35,6 +35,7 @@ ucontext_t idle_context;
 // ZioS: definisco il contesto dei segnali
 ucontext_t signal_sigMovUp_context;
 ucontext_t signal_sigKill_context;
+//ucontext_t signal_main_context;
 
 int shutdown_now=0; // used for termination
 char system_stack[STACK_SIZE];
@@ -42,6 +43,37 @@ char system_stack[STACK_SIZE];
 sigset_t signal_set;                       // process wide signal mask 
 char signal_stack[STACK_SIZE];     
 volatile int disastrOS_time=0;
+
+// Gio: definisco il contesto che farà da handler principale dei segnali
+void signalHandler(){
+
+  //getcontext(&signal_main_context);
+
+  //Gio:implemento controllo segnali attivi+swap in caso
+  for(int i=0;i<MAX_SIGNALS;i++){
+    switch (i)
+    {
+    case DSOS_SIGKILL:
+      if (running->signal_received[i] == 1 && running->signal_served[i] == 0)
+        //swapcontext(&signal_main_context, &running->signal_context_sigKill);
+        setcontext(&running->signal_context_sigKill);
+      break;
+
+    case DSOS_SIGMOVUP:
+      if (running->signal_received[i] == 1 && running->signal_served[i] == 0)
+        //swapcontext(&signal_main_context, &running->signal_context_sigMovUp);
+        setcontext(&running->signal_context_sigMovUp);
+      break;
+    
+    default:
+      // Atri segnali non ancora implementati
+      break;
+    }
+  }
+  
+  running->signals = 0;
+  setcontext(&running->cpu_state);
+}
 
 // Gio: Definiamo le funzioni invocate dai contesti
 void signalInterrupt_Kill(){
@@ -89,32 +121,15 @@ void timerInterrupt(){
   
   internal_schedule();
 
-  // if (running->pid != 1) disastrOS_printPCB_signals();
+  //if (running->pid != 1) disastrOS_printPCB_signals();
 
-  
-  //Gio:implemento controllo segnali attivi+swap in caso
-  for(int i=0;i<MAX_SIGNALS;i++){
-    switch (i)
-    {
-    case DSOS_SIGKILL:
-      if (running->signal_received[i] == 1 && running->signal_served[i] == 0)
-        //getcontext(&interrupt_context);
-        setcontext(&running->signal_context_sigKill);
-      break;
-
-    case DSOS_SIGMOVUP:
-      if (running->signal_received[i] == 1 && running->signal_served[i] == 0)
-        //getcontext(&interrupt_context);
-        setcontext(&running->signal_context_sigMovUp);
-      break;
-    
-    default:
-      // Atri segnali non ancora implementati
-      break;
-    }
-    
-  }
+  running->signal_received[DSOS_SIGMOVUP] = 1;
  
+  // Gio: se il segnale ha dei segnali da gestire, passo al contesto principale 
+  if(running->signals != 0){
+    setcontext(&signal_main_context);
+  }
+
   setcontext(&running->cpu_state);
 }
 
@@ -139,9 +154,6 @@ void setupSignals(void) {
   it.it_value = it.it_interval;
   if (setitimer(ITIMER_REAL, &it, NULL) ) perror("setitiimer");
 }
-
-
-
 
 int disastrOS_syscall(int syscall_num, ...) {
   assert(running); 
@@ -254,6 +266,12 @@ void disastrOS_start(void (*f)(void*), void* f_args, char* logfile){
   sigemptyset(&interrupt_context.uc_sigmask);
   makecontext(&interrupt_context, timerInterrupt, 0); //< this is a context for the interrupt
 
+  // Gio:creiamo il contesto per gestione segnali
+  disastrOS_debug("CREO IL CONTESTO PER LA GESTIONE DEI SEGNALI...");
+  signal_main_context=trap_context; 
+  signal_main_context.uc_link = &main_context;
+  sigemptyset(&signal_main_context.uc_sigmask);
+  makecontext(&signal_main_context, signalHandler, 0); //< this is a context for the interrupt
 
   /* STARTING FIRST PROCESS AND IDLING*/
   running=PCB_alloc();

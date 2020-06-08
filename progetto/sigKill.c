@@ -6,5 +6,4 @@
 void sigKill(){
   
   printf("Eseguo una sigKill\n");
-  
 }
