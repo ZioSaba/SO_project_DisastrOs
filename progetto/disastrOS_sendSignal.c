@@ -83,7 +83,7 @@ void internal_signal(){
             else{
                
                 signalMakeContext(last_pcb, DSOS_SIGMOVUP);
-                 last_pcb->signals = DSOS_SIGMOVUP;
+                last_pcb->signals = DSOS_SIGMOVUP;
                 if (last_pcb->signal_received[DSOS_SIGMOVUP] == 0)
                     last_pcb->signal_received[DSOS_SIGMOVUP] = 1;
             }

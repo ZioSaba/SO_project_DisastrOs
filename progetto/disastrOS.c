@@ -35,7 +35,7 @@ ucontext_t idle_context;
 // ZioS: definisco il contesto dei segnali
 ucontext_t signal_sigMovUp_context;
 ucontext_t signal_sigKill_context;
-//ucontext_t signal_main_context;
+ucontext_t signal_main_context;
 
 int shutdown_now=0; // used for termination
 char system_stack[STACK_SIZE];
@@ -48,6 +48,7 @@ volatile int disastrOS_time=0;
 void signalHandler(){
 
   //getcontext(&signal_main_context);
+  //printf("SONO DENTRO AL SIGNAL HANDLER\n");
 
   //Gio:implemento controllo segnali attivi+swap in caso
   for(int i=0;i<MAX_SIGNALS;i++){
@@ -86,9 +87,8 @@ void signalInterrupt_Kill(){
   // ZioS: Resettare il segnale ricevuto
   running->signal_served[DSOS_SIGKILL] = 0;
   running->signal_received[DSOS_SIGKILL] = 0;
+  
   setcontext(&running->cpu_state);
-
-  //swapcontext(&running->signal_context_sigKill, &interrupt_context);
 }
 
 // Gio: CIAO MI Piace swappare contesto
@@ -104,7 +104,6 @@ void signalInterrupt_MovUp(){
   running->signal_received[DSOS_SIGMOVUP] = 0;
 
   setcontext(&running->cpu_state);
-  //swapcontext(&running->signal_context_sigMovUp, &interrupt_context);
 }
 
 void timerHandler(int j, siginfo_t *si, void *old_context) {
@@ -121,14 +120,18 @@ void timerInterrupt(){
   
   internal_schedule();
 
-  //if (running->pid != 1) disastrOS_printPCB_signals();
+  // if (running->pid != 1) disastrOS_printPCB_signals();
 
-  running->signal_received[DSOS_SIGMOVUP] = 1;
+  // running->signal_received[DSOS_SIGMOVUP] = 1;
+
+
  
   // Gio: se il segnale ha dei segnali da gestire, passo al contesto principale 
   if(running->signals != 0){
     setcontext(&signal_main_context);
   }
+
+  //printf("SE SONO QUI NON CI DEVONO ESSERE SEGNALI DA GESTIRE\n");
 
   setcontext(&running->cpu_state);
 }
