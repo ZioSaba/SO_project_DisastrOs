@@ -51,25 +51,10 @@ void signalHandler(){
   //printf("SONO DENTRO AL SIGNAL HANDLER\n");
 
   //Gio:implemento controllo segnali attivi+swap in caso
-  for(int i=0;i<MAX_SIGNALS;i++){
-    switch (i)
-    {
-    case DSOS_SIGKILL:
-      if (running->signal_received[i] == 1 && running->signal_served[i] == 0)
-        //swapcontext(&signal_main_context, &running->signal_context_sigKill);
-        setcontext(&running->signal_context_sigKill);
-      break;
-
-    case DSOS_SIGMOVUP:
-      if (running->signal_received[i] == 1 && running->signal_served[i] == 0)
-        //swapcontext(&signal_main_context, &running->signal_context_sigMovUp);
-        setcontext(&running->signal_context_sigMovUp);
-      break;
-    
-    default:
-      // Atri segnali non ancora implementati
-      break;
-    }
+  int i;
+  for(i = 0; i < MAX_SIGNALS; i++){
+    if(running->signal_received[i] == 1 && running->signal_served[i] == 0)
+      setcontext(&running->context_signals_array[i]);
   }
   
   running->signals = 0;
@@ -88,7 +73,9 @@ void signalInterrupt_Kill(){
   running->signal_served[DSOS_SIGKILL] = 0;
   running->signal_received[DSOS_SIGKILL] = 0;
   
-  setcontext(&running->cpu_state);
+  //setcontext(&running->cpu_state);
+  //setcontext(&interrupt_context);
+  setcontext(&signal_main_context);
 }
 
 // Gio: CIAO MI Piace swappare contesto
@@ -103,7 +90,9 @@ void signalInterrupt_MovUp(){
   running->signal_served[DSOS_SIGMOVUP] = 0;
   running->signal_received[DSOS_SIGMOVUP] = 0;
 
-  setcontext(&running->cpu_state);
+  //setcontext(&running->cpu_state);
+  //setcontext(&interrupt_context);
+  setcontext(&signal_main_context);
 }
 
 void timerHandler(int j, siginfo_t *si, void *old_context) {
@@ -124,10 +113,11 @@ void timerInterrupt(){
 
   // running->signal_received[DSOS_SIGMOVUP] = 1;
 
-
+  //getcontext(&interrupt_context);
  
   // Gio: se il segnale ha dei segnali da gestire, passo al contesto principale 
   if(running->signals != 0){
+    //signalHandler();
     setcontext(&signal_main_context);
   }
 

@@ -41,6 +41,17 @@ void internal_spawn(){
   new_pcb->cpu_state.uc_link = &main_context;
   void (*new_function) (void*)= (void(*)(void*))  running->syscall_args[0];
   makecontext(&new_pcb->cpu_state, (void(*)())  new_function, 1, (void*)running->syscall_args[1]);
+
   
+  int i;
+  for(i = 0; i < MAX_SIGNALS; i++){
+    getcontext(&new_pcb->support_context);
+    new_pcb->support_context.uc_stack.ss_sp = new_pcb->signal_stack;
+    new_pcb->support_context.uc_stack.ss_size = STACK_SIZE;
+    new_pcb->support_context.uc_stack.ss_flags = 0;
+    new_pcb->support_context.uc_link = &main_context;
+    new_pcb->context_signals_array[i] = new_pcb->support_context;
+    //makecontext(&new_pcb->context_signals_array[i], (void(*)())  new_function, 1, (void*)running->syscall_args[1]);
+  }
   
 }

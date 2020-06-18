@@ -14,6 +14,10 @@ void internal_signal(){
     
         if (ready_list.first != 0){
             PCB* last_pcb = (PCB*) ready_list.last;
+            if(last_pcb->pid == 0){
+                printf("ERA IL CAZZO DI INIT");
+                return;
+            }
 
             //ZioS: se la maschera è già stata impostata ad un segnale simile oppure quel segnale è servito in quel momento, mi fermo
             if (last_pcb->signals == DSOS_SIGKILL || last_pcb->signal_served[DSOS_SIGKILL] == 1){
@@ -32,6 +36,10 @@ void internal_signal(){
     
         else if (waiting_list.first != 0){
             PCB* last_pcb = (PCB*) waiting_list.last;
+            if(last_pcb->pid == 0){
+                printf("ERA IL CAZZO DI INIT!!");
+                return;
+            }
 
             //ZioS: se la maschera è già stata impostata ad un segnale simile oppure quel segnale è servito in quel momento, mi fermo
             if (last_pcb->signals == DSOS_SIGKILL || last_pcb->signal_served[DSOS_SIGKILL] == 1){
@@ -48,12 +56,18 @@ void internal_signal(){
         }
         // ZioS: qui non ci dovrebbe arrivare mai
     }
+
+    
     else if (disastrOS_time % TIME_MOVUP == 0){
 
         printf("!!!STO INVIANDO UNA SIGMOVUP!!!\n");
     
         if (ready_list.first != 0){
             PCB* last_pcb = (PCB*) ready_list.last;
+            if(last_pcb->pid == 0){
+                printf("ERA IL CAZZO DI INIT!!");
+                return;
+            }
 
             //ZioS: se la maschera è già stata impostata ad un segnale simile oppure quel segnale è servito in quel momento, mi fermo
             if (last_pcb->signals == DSOS_SIGMOVUP || last_pcb->signal_served[DSOS_SIGMOVUP] == 1){
@@ -72,6 +86,10 @@ void internal_signal(){
     
         else if (waiting_list.first != 0){
             PCB* last_pcb = (PCB*) waiting_list.last;
+            if(last_pcb->pid == 0){
+                printf("ERA IL CAZZO DI INIT!!");
+                return;
+            }
 
             //ZioS: se la maschera è già stata impostata ad un segnale simile oppure quel segnale è servito in quel momento, mi fermo
             if (last_pcb->signals == DSOS_SIGMOVUP || last_pcb->signal_served[DSOS_SIGMOVUP] == 1){
@@ -90,4 +108,5 @@ void internal_signal(){
         }
         // ZioS: qui non di dovrebbe arrivare mai
     }
+    
 }
