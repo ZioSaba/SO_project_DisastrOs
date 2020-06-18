@@ -42,15 +42,5 @@ void internal_spawn(){
   void (*new_function) (void*)= (void(*)(void*))  running->syscall_args[0];
   makecontext(&new_pcb->cpu_state, (void(*)())  new_function, 1, (void*)running->syscall_args[1]);
   
-  getcontext(&new_pcb->signal_context_sigKill);
-  new_pcb->signal_context_sigKill.uc_stack.ss_sp = new_pcb->signal_stack;
-  new_pcb->signal_context_sigKill.uc_stack.ss_size = STACK_SIZE;
-  new_pcb->signal_context_sigKill.uc_stack.ss_flags = 0;
-  new_pcb->signal_context_sigKill.uc_link = &main_context;
-
-  getcontext(&new_pcb->signal_context_sigMovUp);
-  new_pcb->signal_context_sigMovUp.uc_stack.ss_sp = new_pcb->signal_stack;
-  new_pcb->signal_context_sigMovUp.uc_stack.ss_size = STACK_SIZE;
-  new_pcb->signal_context_sigMovUp.uc_stack.ss_flags = 0;
-  new_pcb->signal_context_sigMovUp.uc_link = &main_context;
+  
 }

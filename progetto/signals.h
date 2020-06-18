@@ -8,4 +8,4 @@
 
 void sigMovUp();
 void sigKill();
-void signalMakeContext();
+void signalMakeContext(PCB* proc_pcb, int signal_number);
