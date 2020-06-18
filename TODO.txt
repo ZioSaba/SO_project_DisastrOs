@@ -10,14 +10,7 @@ Definizione dei segnali
 PER EVITARE DI RIMETTERE LE CREDENZIALI: $git config credential.helper store
 
 
-1) Modularizzare la makecontext in due file
+1) Generalizza i contesti dei segnali facendo un array di contesti e leva i switch case nella signalMakeContext (accedo all'array tramite il signal_number)
 
-2) Far diventare i file sigMoveUp e sigKill(da cambiare) dei wrapper che:
-   -> all'inizio settano il bit della maschera del servito
-   -> esegue l'handler del segnale
-   -> resetta la machera del servito 
-
-3) Rivedere la gestione dei contesti !!!!IMPORTANTE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-   Creare un nuovo contesto che farà da mega gestore dei segnali e fare la setcontext dal contesto dell'interrupt a quello nuovo (vedere come fare)
-
-4) Resettare la variabile signals a 0 se ho gestito tutti i segnali!
+2) Fare si che la internal_signal restituisce tramite un intero (che corrisponde al numero di segnale che ha inviato) e usare quello per accedere
+   all'array dei contesti e fare la make di quello specifico

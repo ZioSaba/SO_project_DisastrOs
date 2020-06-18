@@ -52,18 +52,23 @@ void signalHandler(){
 
   //Gio:implemento controllo segnali attivi+swap in caso
   for(int i=0;i<MAX_SIGNALS;i++){
+    //printf("VALORE DI I: %d\n", i);
     switch (i)
     {
     case DSOS_SIGKILL:
-      if (running->signal_received[i] == 1 && running->signal_served[i] == 0)
+      if (running->signal_received[i] == 1 && running->signal_served[i] == 0){
         //swapcontext(&signal_main_context, &running->signal_context_sigKill);
+        //printf("Sono tornato dopo la swap della sigkill\n");
         setcontext(&running->signal_context_sigKill);
+        }
       break;
 
     case DSOS_SIGMOVUP:
-      if (running->signal_received[i] == 1 && running->signal_served[i] == 0)
+      if (running->signal_received[i] == 1 && running->signal_served[i] == 0){
         //swapcontext(&signal_main_context, &running->signal_context_sigMovUp);
+        //printf("Sono tornato dopo la swap della sigmovup\n");
         setcontext(&running->signal_context_sigMovUp);
+        }
       break;
     
     default:
@@ -79,6 +84,8 @@ void signalHandler(){
 // Gio: Definiamo le funzioni invocate dai contesti
 void signalInterrupt_Kill(){
 
+  printf("SONO DENTRO AL GESTORE DELLA SIGKILL\n");
+
   // ZioS: Impostare la maschera del servito
   running->signal_served[DSOS_SIGKILL] = 1;
 
@@ -88,11 +95,14 @@ void signalInterrupt_Kill(){
   running->signal_served[DSOS_SIGKILL] = 0;
   running->signal_received[DSOS_SIGKILL] = 0;
   
-  setcontext(&running->cpu_state);
+  //setcontext(&running->cpu_state);
+  setcontext(&signal_main_context);
 }
 
 // Gio: CIAO MI Piace swappare contesto
 void signalInterrupt_MovUp(){
+
+  printf("SONO DENTRO AL GESTORE DELLA SIGMOVUP\n");
 
   // ZioS: Impostare la maschera del servito
   running->signal_served[DSOS_SIGMOVUP] = 1;
@@ -103,7 +113,8 @@ void signalInterrupt_MovUp(){
   running->signal_served[DSOS_SIGMOVUP] = 0;
   running->signal_received[DSOS_SIGMOVUP] = 0;
 
-  setcontext(&running->cpu_state);
+  //setcontext(&running->cpu_state);
+  setcontext(&signal_main_context);
 }
 
 void timerHandler(int j, siginfo_t *si, void *old_context) {
@@ -122,13 +133,12 @@ void timerInterrupt(){
 
   // if (running->pid != 1) disastrOS_printPCB_signals();
 
-  // running->signal_received[DSOS_SIGMOVUP] = 1;
-
-
- 
+  
+  
   // Gio: se il segnale ha dei segnali da gestire, passo al contesto principale 
   if(running->signals != 0){
-    setcontext(&signal_main_context);
+    //signalMakeContext();
+    signalHandler();
   }
 
   //printf("SE SONO QUI NON CI DEVONO ESSERE SEGNALI DA GESTIRE\n");
