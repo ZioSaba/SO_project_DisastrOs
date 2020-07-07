@@ -29,7 +29,7 @@ void disastrOS_spawn(void (*f)(void*), void* args );
 void disastrOS_shutdown();
 void disastrOS_sleep(int);
 
-// Gio: definisco la syscall che invia i segnali 
+// Gio: definiamo le funzioni per l'invio dei segnali
 void disastrOS_sendSignal();
 void disastrOS_printPCB_signals();
 void signalInterrupt_Kill();

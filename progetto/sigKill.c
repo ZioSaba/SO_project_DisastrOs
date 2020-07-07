@@ -4,6 +4,5 @@
 #include "disastrOS_syscalls.h"
 
 void sigKill(){
-  
-  printf("Eseguo una sigKill\n");
+  printf("Eseguo una sigKill!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
 }

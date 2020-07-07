@@ -33,14 +33,12 @@ typedef struct PCB{
 
   /***************************************************/
   //ZioS: definisco ciò che verrà usato dal processo quando passa alla gestione del segnale
-  ucontext_t context_signals_array[MAX_SIGNALS];
-  ucontext_t support_context;
-  //ucontext_t signal_context_sigMovUp;   // contesto per il segnale sigMovUp
-  //ucontext_t signal_context_sigKill;    // contesto per il segnale sigKill
-  char signal_stack[STACK_SIZE];        // stack usato dai contesti sopracitati
-  int signal_received[MAX_SIGNALS];     // bitmap per sapere quali segnali sono stati ricevuti
-  int signal_served[MAX_SIGNALS];       // bitmap per sapere quale segnale è servito in un certo momento
-  bool movUp;                           // variabile settata dal segnale sigMovUp
+  ucontext_t context_signals_array[MAX_SIGNALS];    // array contenente i contesti che verranno utilizzati dai segnali 
+  ucontext_t support_context;                       // contesto di appoggio usato per la creazione dell'array di contesti
+  char signal_stack[STACK_SIZE];                    // stack usato dai contesti sopracitati
+  int signal_received[MAX_SIGNALS];                 // bitmap per sapere quali segnali sono stati ricevuti
+  int signal_served[MAX_SIGNALS];                   // bitmap per sapere quale segnale è servito in un certo momento
+  bool movUp;                                       // variabile settata dal segnale sigMovUp
   /***************************************************/
   
   //the one below is a hack for the syscalls

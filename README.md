@@ -24,3 +24,18 @@ $make
 
 Il simbolo "###" crea un titolo piccolo senza divisorio
 ### Sono un titolo piccolissimo
+
+File che sono stati modificati
+- disastrOS_constants.h
+- disastrOS_pcb.c e .h
+- disastrOS_sleep.c
+- disastrOS_spawn.c
+- disastrOS_syscalls.h
+- disastrOS.c e .h
+
+File che sono stati aggiunti
+- disastrOS_sendSignal.c
+- sigKill.c
+- sigMovUp.c
+- signalMakeContext.c
+- signals.h

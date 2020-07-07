@@ -6,7 +6,7 @@
 #include "disastrOS_syscalls.h"
 #include "signals.h"
 
-// Gio: il timer invia il segnale di kill o sposta in testa l'ultimo processo a seconda del valore del quanto temporale
+// Gio: il timer invia il segnale di kill o dimezza lo sleepTime del processo in coda alla ready_list o alla waiting_list (se vuota la precedente)
 void internal_signal(){
     if (disastrOS_time % TIME_KILL == 0){
 
@@ -14,8 +14,10 @@ void internal_signal(){
     
         if (ready_list.first != 0){
             PCB* last_pcb = (PCB*) ready_list.last;
+            
+            // ZioS: questa è la storia di come ho perso 4 ore della mia vita per una if :D
+            // ZioS: serve per assicurarsi che il processo a cui si sta mandando il segnale non sia init stesso
             if(last_pcb->pid == 0){
-                printf("ERA IL CAZZO DI INIT");
                 return;
             }
 
@@ -36,8 +38,9 @@ void internal_signal(){
     
         else if (waiting_list.first != 0){
             PCB* last_pcb = (PCB*) waiting_list.last;
+
+            // ZioS: serve per assicurarsi che il processo a cui si sta mandando il segnale non sia init stesso
             if(last_pcb->pid == 0){
-                printf("ERA IL CAZZO DI INIT!!");
                 return;
             }
 
@@ -64,8 +67,9 @@ void internal_signal(){
     
         if (ready_list.first != 0){
             PCB* last_pcb = (PCB*) ready_list.last;
+
+            // ZioS: serve per assicurarsi che il processo a cui si sta mandando il segnale non sia init stesso
             if(last_pcb->pid == 0){
-                printf("ERA IL CAZZO DI INIT!!");
                 return;
             }
 
@@ -86,8 +90,9 @@ void internal_signal(){
     
         else if (waiting_list.first != 0){
             PCB* last_pcb = (PCB*) waiting_list.last;
+
+            // ZioS: serve per assicurarsi che il processo a cui si sta mandando il segnale non sia init stesso
             if(last_pcb->pid == 0){
-                printf("ERA IL CAZZO DI INIT!!");
                 return;
             }
 

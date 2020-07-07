@@ -32,9 +32,7 @@ ucontext_t trap_context;
 ucontext_t main_context;
 ucontext_t idle_context;
 
-// ZioS: definisco il contesto dei segnali
-ucontext_t signal_sigMovUp_context;
-ucontext_t signal_sigKill_context;
+// ZioS: definisco il contesto principale dei segnali
 ucontext_t signal_main_context;
 
 int shutdown_now=0; // used for termination
@@ -47,10 +45,7 @@ volatile int disastrOS_time=0;
 // Gio: definisco il contesto che farà da handler principale dei segnali
 void signalHandler(){
 
-  //getcontext(&signal_main_context);
-  //printf("SONO DENTRO AL SIGNAL HANDLER\n");
-
-  //Gio:implemento controllo segnali attivi+swap in caso
+  //Gio: controllo l'array dei segnali e lo se servo se settato e se non già servito in quel momento
   int i;
   for(i = 0; i < MAX_SIGNALS; i++){
     if(running->signal_received[i] == 1 && running->signal_served[i] == 0)
@@ -61,45 +56,43 @@ void signalHandler(){
   setcontext(&running->cpu_state);
 }
 
-// Gio: Definiamo le funzioni invocate dai contesti
+/*****************************************************************/
+// Gio: Definiamo le funzioni invocate dai contesti dei segnali
 void signalInterrupt_Kill(){
 
-  // ZioS: Impostare la maschera del servito
+  // ZioS: setta la maschera del servito
   running->signal_served[DSOS_SIGKILL] = 1;
 
   sigKill();
 
-  // ZioS: Resettare il segnale ricevuto
+  // ZioS: resetta il segnale nei due array
   running->signal_served[DSOS_SIGKILL] = 0;
   running->signal_received[DSOS_SIGKILL] = 0;
   
-  //setcontext(&running->cpu_state);
-  //setcontext(&interrupt_context);
   setcontext(&signal_main_context);
 }
 
-// Gio: CIAO MI Piace swappare contesto
 void signalInterrupt_MovUp(){
 
-  // ZioS: Impostare la maschera del servito
+  // ZioS: setta la maschera del servito
   running->signal_served[DSOS_SIGMOVUP] = 1;
 
   sigMovUp();
 
-  // ZioS: Resettare il segnale ricevuto
+  // ZioS: resetta il segnale nei due array
   running->signal_served[DSOS_SIGMOVUP] = 0;
   running->signal_received[DSOS_SIGMOVUP] = 0;
 
-  //setcontext(&running->cpu_state);
-  //setcontext(&interrupt_context);
   setcontext(&signal_main_context);
 }
+/*****************************************************************/
 
 void timerHandler(int j, siginfo_t *si, void *old_context) {
   swapcontext(&running->cpu_state, &interrupt_context);
 }
 
 void timerInterrupt(){
+
   ++disastrOS_time;
   printf("time: %d\n", disastrOS_time);
 
@@ -109,19 +102,17 @@ void timerInterrupt(){
   
   internal_schedule();
 
+  // ZioS: funzione definita in fondo la file che stampa 
+  // lo stato degli array dei segnali ricevuti dal processo
   // if (running->pid != 1) disastrOS_printPCB_signals();
 
-  // running->signal_received[DSOS_SIGMOVUP] = 1;
-
-  //getcontext(&interrupt_context);
  
-  // Gio: se il segnale ha dei segnali da gestire, passo al contesto principale 
+  // Gio: se il processo in esecuzione ha dei segnali da gestire
+  // passo al contesto principale per la gestione dei segnali 
   if(running->signals != 0){
-    //signalHandler();
     setcontext(&signal_main_context);
   }
-
-  //printf("SE SONO QUI NON CI DEVONO ESSERE SEGNALI DA GESTIRE\n");
+  
 
   setcontext(&running->cpu_state);
 }
@@ -222,7 +213,7 @@ void disastrOS_start(void (*f)(void*), void* f_args, char* logfile){
   syscall_vector[DSOS_CALL_SHUTDOWN]  = internal_shutdown;
   syscall_numarg[DSOS_CALL_SHUTDOWN]  = 0;
 
-  // Gio: inserisco la syscall per l'invio dei segnali nei due
+  // Gio: inserisco la syscall per l'invio dei segnali nei due vettori
   syscall_vector[DSOS_CALL_SENDSIG]   = internal_signal;
   syscall_numarg[DSOS_CALL_SENDSIG]   = 0;
 
@@ -259,12 +250,14 @@ void disastrOS_start(void (*f)(void*), void* f_args, char* logfile){
   sigemptyset(&interrupt_context.uc_sigmask);
   makecontext(&interrupt_context, timerInterrupt, 0); //< this is a context for the interrupt
 
-  // Gio:creiamo il contesto per gestione segnali
+  /**************************************************************************/
+  // Gio:creiamo il contesto principale per la gestione dei segnali
   disastrOS_debug("CREO IL CONTESTO PER LA GESTIONE DEI SEGNALI...");
   signal_main_context=trap_context; 
   signal_main_context.uc_link = &main_context;
   sigemptyset(&signal_main_context.uc_sigmask);
-  makecontext(&signal_main_context, signalHandler, 0); //< this is a context for the interrupt
+  makecontext(&signal_main_context, signalHandler, 0);
+  /**************************************************************************/
 
   /* STARTING FIRST PROCESS AND IDLING*/
   running=PCB_alloc();
@@ -346,6 +339,8 @@ void disastrOS_printStatus(){
   printf("\n***********************************************\n\n");
 };
 
+/******************************************************************************/
+// ZioS: funzione che ho creato per stampare lo stato dei segnali del processo
 void disastrOS_printPCB_signals(){
   printf("/*******RUNNING SIGNALS STATUS*******/\n");
   printf("Running: ");
@@ -355,4 +350,5 @@ void disastrOS_printPCB_signals(){
   printf("SIGKILL: %d\n", running->signal_received[DSOS_SIGKILL]);
   printf("SIGMOVUP: %d\n", running->signal_received[DSOS_SIGMOVUP]);
   printf("\n***********************************************\n\n");
+/******************************************************************************/
 }

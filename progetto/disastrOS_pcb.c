@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 /******************************/
-//ZioS: aggiunta di librerie
+//ZioS: aggiunta di librerie per l'utilizzo della memset
 #include <string.h>
 /******************************/
 
@@ -63,7 +63,7 @@ PCB* PCB_alloc() {
   //CPUState_init(&pcb->cpu);
 
   /**********************************/
-  //ZioS: settiamo a 0 i due array utilizzati,quello per la ricezione dei segnali e quello per capire quale segnale è servito
+  //ZioS: settiamo a 0 i due array utilizzati, ovvero quello per la ricezione dei segnali e quello per capire quale segnale è servito
   memset(pcb->signal_served, 0, MAX_SIGNALS*sizeof(int));
   memset(pcb->signal_received, 0, MAX_SIGNALS*sizeof(int));
 

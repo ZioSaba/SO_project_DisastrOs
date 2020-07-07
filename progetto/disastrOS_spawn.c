@@ -42,7 +42,7 @@ void internal_spawn(){
   void (*new_function) (void*)= (void(*)(void*))  running->syscall_args[0];
   makecontext(&new_pcb->cpu_state, (void(*)())  new_function, 1, (void*)running->syscall_args[1]);
 
-  
+  // ZioS: utilizzo un for per inizializzare nell'array dei contesti dei segnali tutti i singoli contesti
   int i;
   for(i = 0; i < MAX_SIGNALS; i++){
     getcontext(&new_pcb->support_context);
@@ -51,7 +51,6 @@ void internal_spawn(){
     new_pcb->support_context.uc_stack.ss_flags = 0;
     new_pcb->support_context.uc_link = &main_context;
     new_pcb->context_signals_array[i] = new_pcb->support_context;
-    //makecontext(&new_pcb->context_signals_array[i], (void(*)())  new_function, 1, (void*)running->syscall_args[1]);
   }
   
 }

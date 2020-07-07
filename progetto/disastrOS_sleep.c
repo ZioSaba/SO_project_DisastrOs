@@ -21,12 +21,10 @@ void internal_sleep(){
   if (running->movUp){
     printf("Il processo in running ha precedentemente ricevuto un sigMovUp, quindi dimezzo il suo sleepTime\n");
     wake_time=disastrOS_time+(cycles_to_sleep/2);
-    // printf("waketime = %d\n",wake_time);
     running->movUp=false;
   }
   else{
     wake_time=disastrOS_time+cycles_to_sleep;
-    // printf("waketime = %d\n",wake_time);
   }
   
 
