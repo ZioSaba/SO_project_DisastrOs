@@ -1,5 +1,3 @@
-#include "disastrOS_constants.h"
-#include "disastrOS_globals.h"
 #include "signals.h"
 
 // ZioS: quando viene inviato un segnale, mi baso sul suo numero per la creazione del giusto contesto
@@ -15,7 +13,7 @@ void signalMakeContext(PCB* proc_pcb, int signal_number){
         break;
 
     default:
-            // Qui non ci arriva
+            // Qui altri segnali
         break;
     }
 }

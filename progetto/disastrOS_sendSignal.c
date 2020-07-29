@@ -18,6 +18,9 @@ void internal_signal(){
             // ZioS: questa è la storia di come ho perso 4 ore della mia vita per una if :D
             // ZioS: serve per assicurarsi che il processo a cui si sta mandando il segnale non sia init stesso
             if(last_pcb->pid == 0){
+				printf("ERROR: sendSignal was called on init!\n");
+				printf("Aborting...\n");
+				running->syscall_retvalue = DSOS_ESIGNAL;
                 return;
             }
 
@@ -99,6 +102,9 @@ void internal_signal(){
 
             // ZioS: serve per assicurarsi che il processo a cui si sta mandando il segnale non sia init stesso
             if(last_pcb->pid == 0){
+				printf("ERROR: sendSignal was called on init!\n");
+				printf("Aborting...\n");
+				running->syscall_retvalue = DSOS_ESIGNAL;
                 return;
             }
 

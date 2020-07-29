@@ -9,3 +9,5 @@
 void sigMovUp();
 void sigKill();
 void signalMakeContext(PCB* proc_pcb, int signal_number);
+void signalInterrupt_Kill();
+void signalInterrupt_MovUp();
